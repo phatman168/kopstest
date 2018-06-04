@@ -27,20 +27,20 @@
     owner: root
     group: root
     mode: 0440
-    attributes: i
+    attr: ie
 
 - name: comment out auth.log from rsyslog
   lineinfile:
+    path: "/etc/logrotate.d/rsyslog"
     line: "/var/log/auth.log"
     state: absent
-
-- name: make auth.log append only
-  file:
-    path: "/var/log/auth.log"
-    attributes: a
 
 - name: set custom logrotate
   copy:
     src: "authlogrotate"
     dest: "/etc/logrotate.d/authlog"
     
+- name: make auth.log append only
+  file:
+    path: "/var/log/auth.log"
+    attr: ae
