@@ -20,16 +20,27 @@
   with_items:
     - "{{ users }}"
 
-- name: configure krb5 and sssd
+- name: create sudoers
   template:
     src: "{{ sudogroup }}.j2"
     dest: "/etc/sudoers.d/{{ sudogroup }}"
     owner: root
     group: root
     mode: 0440
+    attributes: i
+
+- name: comment out auth.log from rsyslog
+  lineinfile:
+    line: "/var/log/auth.log"
+    state: absent
+
+- name: make auth.log append only
+  file:
+    path: "/var/log/auth.log"
+    attributes: a
 
 - name: set custom logrotate
   copy:
-    src: authlogrotate
-    dest: /etc/logrotate.d/authlog
+    src: "authlogrotate"
+    dest: "/etc/logrotate.d/authlog"
     
