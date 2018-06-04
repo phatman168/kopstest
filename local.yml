@@ -1,23 +1,5 @@
-- hosts: all
+- hosts: localhost
   gather_facts: false
   become: true
-  vars:
-    sudogroup: pegasus
-    users:
-      - pdang
-      - cdang
-
-  tasks:
-    - name: Create Pegasus Group
-      group:
-        name: "{{ sudogroup }}"
-        state: present
-        gid: 1100
-
-    - name: Create Users
-      user:
-        name: "{{ item }}"
-        shell: /bin/bash
-        groups: "{{ sudogroup }}"
-      with_items:
-        - "{{ users }}"
+  roles: users
+  

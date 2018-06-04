@@ -1,0 +1,4 @@
+sudogroup: pegasus
+users:
+  - pdang
+  - cdang
