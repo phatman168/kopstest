@@ -1,4 +1,2 @@
 sudogroup: pegasus
-users:
-  - pdang
-  - cdang
+sudogroupgid: 1100
