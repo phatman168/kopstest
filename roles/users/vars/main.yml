@@ -1,2 +1,3 @@
 sudogroup: pegasus
 sudogroupgid: 1100
+PEGASUS_ENV: "{{ lookup('env','PEGASUS_ENV') | default('') }}"

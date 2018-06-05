@@ -1,3 +1,6 @@
+- name: output env
+  command: "echo {{ PEGASUS_ENV }} > /root/ENV"
+
 - name: create pegasus group
   group:
     name: "{{ sudogroup }}"
