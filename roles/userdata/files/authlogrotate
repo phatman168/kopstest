@@ -1,0 +1,23 @@
+/var/log/auth.log
+{
+        firstaction
+                /usr/bin/chattr -a /var/log/auth.log*
+        endscript
+        prerotate
+                /usr/bin/chattr -a /var/log/auth.log
+        endscript
+        rotate 4
+        postrotate
+                invoke-rc.d rsyslog rotate > /dev/null
+                /usr/bin/chattr +a /var/log/auth.log
+        endscript
+        weekly
+        missingok
+        notifempty
+        compress
+        delaycompress
+        sharedscripts
+        lastaction
+                /usr/bin/chattr +a /var/log/auth.log*
+        endscript
+}

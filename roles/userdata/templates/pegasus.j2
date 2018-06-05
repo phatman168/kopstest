@@ -1,0 +1,5 @@
+Cmnd_Alias   NSHELLS = /bin/sh,/bin/bash,/usr/local/sbin/*,/usr/local/bin/*
+Cmnd_Alias   NSU = /bin/su, /usr/sbin/visudo,/usr/bin/vi
+Cmnd_Alias   ATTR = /usr/bin/chattr
+Cmnd_Alias   LOGROTATE = /usr/sbin/logrotate *authlog
+%{{ sudogroup }} ALL=(ALL) NOPASSWD:ALL,!NSHELLS,!NSU,!ATTR,!LOGROTATE

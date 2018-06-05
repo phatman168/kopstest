@@ -1,0 +1,77 @@
+- name: create pegasus group
+  group:
+    name: "{{ sudogroup }}"
+    state: present
+    gid: "{{ sudogroupgid }}"
+
+- name: get content of public sshkeys
+  command: cat {{ item }}
+  register: ssh_keys
+  with_fileglob: files/*.pub
+  changed_when: false
+
+- name: create users
+  user:
+    name: "{{ item.item.split('/')[-1].split('.pub')[0] }}"
+    shell: /bin/bash
+    groups: "{{ sudogroup }}"
+  with_items: "{{ssh_keys.results}}"
+  no_log: true
+
+- name: set authorized key
+  authorized_key:
+    user: "{{ item.item.split('/')[-1][:-4] }}"
+    key: "{{item.stdout}}"
+  with_items:
+    - "{{ssh_keys.results}}"
+  no_log: true
+
+- name: create sudoers
+  template:
+    src: "{{ sudogroup }}.j2"
+    dest: "/etc/sudoers.d/{{ sudogroup }}"
+    owner: root
+    group: root
+    mode: 0440
+    attr: ie
+
+- name: comment out auth.log from rsyslog
+  lineinfile:
+    path: "/etc/logrotate.d/rsyslog"
+    line: "/var/log/auth.log"
+    state: absent
+
+- name: set custom logrotate
+  copy:
+    src: "authlogrotate"
+    dest: "/etc/logrotate.d/authlog"
+
+- name: make auth.log append only
+  file:
+    path: "/var/log/auth.log"
+    attr: ae
+
+- name: create directory for snoopy files
+  file:
+    path: "/tmp/snoopyfiles"
+    state: directory
+
+- name: copy files to directory
+  copy:
+    src: "{{ item.file }}"
+    dest: "/tmp/snoopyfiles/"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { file: "snoopy-install.sh", checksum: "snoopy-install.sh.md5", mode: "0755" }
+    - { file: "snoopy-{{ snoopyversion }}.tar.gz", checksum: "{{ lookup('file', 'snoopy-{{ snoopyversion }}.tar.gz.md5') }}", mode: "0644" }
+
+
+- name: install snoopy
+  shell: "./snoopy-install.sh snoopy-{{ snoopyversion }}.tar.gz"
+  args:
+    chdir: "/tmp/snoopyfiles/"
+
+- name: Reboot the server for snoopy
+  shell: ( sleep 3 && /sbin/reboot & )
+  async: 0
+  poll: 0

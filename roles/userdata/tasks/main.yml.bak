@@ -1,0 +1,46 @@
+- name: Create Pegasus Group
+  group:
+    name: "{{ sudogroup }}"
+    state: present
+    gid: 1100
+
+- name: Create Users
+  user:
+    name: "{{ item }}"
+    shell: /bin/bash
+    groups: "{{ sudogroup }}"
+  with_items:
+    - "{{ users }}"
+
+- name: Set authorized key
+  authorized_key:
+    user: "{{ item }}"
+    state: present
+    key: "{{ lookup('file', '{{ item }}.pub') }}"
+  with_items:
+    - "{{ users }}"
+
+- name: create sudoers
+  template:
+    src: "{{ sudogroup }}.j2"
+    dest: "/etc/sudoers.d/{{ sudogroup }}"
+    owner: root
+    group: root
+    mode: 0440
+    attr: ie
+
+- name: comment out auth.log from rsyslog
+  lineinfile:
+    path: "/etc/logrotate.d/rsyslog"
+    line: "/var/log/auth.log"
+    state: absent
+
+- name: set custom logrotate
+  copy:
+    src: "authlogrotate"
+    dest: "/etc/logrotate.d/authlog"
+    
+- name: make auth.log append only
+  file:
+    path: "/var/log/auth.log"
+    attr: ae
