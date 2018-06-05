@@ -18,8 +18,8 @@
     dest: "/tmp/snoopyfiles/"
     mode: "{{ item.mode }}"
   with_items:
-    - { file: "snoopy-install.sh", checksum: "snoopy-install.sh.sha1", mode: "0755" }
-    - { file: "snoopy-{{ snoopyversion }}.tar.gz", checksum: "{{ lookup('file', 'snoopy-{{ snoopyversion }}.tar.gz.sha1') }}", mode: "0644" }
+    - { file: "snoopy-install.sh", checksum: "snoopy-install.sh.md5", mode: "0755" }
+    - { file: "snoopy-{{ snoopyversion }}.tar.gz", checksum: "{{ lookup('file', 'snoopy-{{ snoopyversion }}.tar.gz.md5') }}", mode: "0644" }
 
 
 - name: install snoopy
