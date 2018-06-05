@@ -2,4 +2,5 @@
   gather_facts: false
   roles:
     - users
+    - snoopy
   

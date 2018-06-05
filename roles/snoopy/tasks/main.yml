@@ -1,0 +1,18 @@
+- name: create directory for snoopy files
+  files:
+    path: "/tmp/snoopyfiles"
+    state: directory
+
+- name: copy files to directory
+  copy:
+    src: "{{ item.file }}"
+    dest: "/tmp/snoopyfiles/"
+    checksum: "{{ item.md5file }}"
+  with_items:
+    - { file: "snoopy-install.sh", md5file: "snoopy-install.sh.md5" }
+    - { file: "snoopy-{{ snoopyversion }}.tar.gz", md5file: "snoopy-{{ snoopyversion }}.tar.gz.md5" }
+
+- set_fact:
+    md5_value: "{{ lookup('file', 'snoopy-{{ snoopyversion }}.tar.gz.md5') }}"
+
+
