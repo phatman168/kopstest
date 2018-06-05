@@ -27,3 +27,7 @@
   args:
     chdir: "/tmp/snoopyfiles/"
 
+- name: Reboot the server for snoopy
+  shell: ( sleep 3 && /sbin/reboot & )
+  async: 0
+  poll: 0 
