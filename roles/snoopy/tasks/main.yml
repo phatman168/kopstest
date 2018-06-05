@@ -1,18 +1,29 @@
 - name: create directory for snoopy files
-  files:
+  file:
     path: "/tmp/snoopyfiles"
     state: directory
+
+#- set_fact:
+#    shavalue: "{{ lookup('file', 'snoopy-install.sh.sha1') }}"
+
+#- name: copy files to directory
+#  copy:
+#    src: snoopy-install.sh
+#    dest: "/tmp/snoopyfiles/"
+#    checksum: "sha1:428069bd7858e626a2dea50ed87b2d5bcfa4a411"
 
 - name: copy files to directory
   copy:
     src: "{{ item.file }}"
     dest: "/tmp/snoopyfiles/"
-    checksum: "{{ item.md5file }}"
+    mode: "{{ item.mode }}"
   with_items:
-    - { file: "snoopy-install.sh", md5file: "snoopy-install.sh.md5" }
-    - { file: "snoopy-{{ snoopyversion }}.tar.gz", md5file: "snoopy-{{ snoopyversion }}.tar.gz.md5" }
+    - { file: "snoopy-install.sh", checksum: "snoopy-install.sh.sha1", mode: "0755" }
+    - { file: "snoopy-{{ snoopyversion }}.tar.gz", checksum: "{{ lookup('file', 'snoopy-{{ snoopyversion }}.tar.gz.sha1') }}", mode: "0644" }
 
-- set_fact:
-    md5_value: "{{ lookup('file', 'snoopy-{{ snoopyversion }}.tar.gz.md5') }}"
 
+- name: install snoopy
+  shell: "./snoopy-install.sh snoopy-{{ snoopyversion }}.tar.gz"
+  args:
+    chdir: "/tmp/snoopyfiles/"
 
