@@ -1,4 +1,4 @@
 sudogroup: pegasus
 sudogroupgid: 1100
-pegasus_env: "{{ lookup('file', '/etc/ansible/web/env') }}"
+pegasus_env: "{{ lookup('file', '/etc/ansible/env') }}"
 
